@@ -5,6 +5,7 @@ export default function SendPage() {
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [logoutLoading, setLogoutLoading] = useState(false)
   const navigate = useNavigate()
   const code = localStorage.getItem('linked_code')
 
@@ -37,9 +38,29 @@ export default function SendPage() {
     }
   }
 
-  function unlink() {
-    localStorage.removeItem('linked_code')
-    navigate('/')
+  async function handleLogout() {
+    if (!code || logoutLoading) return
+    setLogoutLoading(true)
+    setStatus(null)
+    try {
+      const r = await fetch('/api/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      })
+      const data = await r.json().catch(() => ({}))
+      if (r.ok && data.status === 'logged_out') {
+        setStatus('Disconnected ✅')
+        localStorage.removeItem('linked_code')
+        setTimeout(() => navigate('/'), 800)
+      } else {
+        setStatus(data.error || 'Logout failed')
+      }
+    } catch (e) {
+      setStatus(e.message || 'Logout error')
+    } finally {
+      setLogoutLoading(false)
+    }
   }
 
   return (
@@ -60,10 +81,11 @@ export default function SendPage() {
       </form>
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
         <button onClick={() => navigate('/')} style={{ padding: '0.4rem 0.75rem' }}>Link Page</button>
-        <button onClick={unlink} style={{ padding: '0.4rem 0.75rem', background: '#444', color: '#fff' }}>Unlink</button>
+        <button onClick={handleLogout} disabled={logoutLoading} style={{ padding: '0.4rem 0.75rem', background: '#b30000', color: '#fff' }}>
+          {logoutLoading ? 'Disconnecting…' : 'Disconnect'}
+        </button>
       </div>
       {status && <p style={{ marginTop: '1rem', color: status.startsWith('Scheduled') ? 'green' : 'crimson' }}>{status}</p>}
     </div>
   )
 }
-
