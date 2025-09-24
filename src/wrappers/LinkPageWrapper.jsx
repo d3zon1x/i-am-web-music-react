@@ -5,9 +5,10 @@ export default function AuthPageWrapper({ children }) {
     return (
         <div
             className="w-screen h-screen bg-cover bg-center flex flex-col lg:flex-row"
-            style={{ backgroundImage: `url(${bgImage})` }}
+            style={{
+    backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${bgImage})`
+  }}
         >
-            {/* Mobile logo on top */}
             <div className="block lg:hidden flex items-center justify-center pt-10">
                 <img
                     src={logo}
@@ -16,12 +17,10 @@ export default function AuthPageWrapper({ children }) {
                 />
             </div>
 
-            {/* Form container */}
             <div className="flex-1 flex items-center justify-center px-6 lg:px-28">
                 {children}
             </div>
 
-            {/* Desktop logo on the right */}
             <div className="hidden lg:flex w-1/2 items-center justify-center p-10 pr-56">
                 <img
                     src={logo}

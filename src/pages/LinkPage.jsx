@@ -11,7 +11,7 @@ export default function LinkPage() {
 
   useEffect(() => {
     const stored = localStorage.getItem('linked_code')
-    if (stored) navigate('/send')
+    if (stored) navigate('/main')
   }, [navigate])
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function LinkPage() {
       if (r.ok && data.status === 'linked') {
         localStorage.setItem('linked_code', data.code)
         setStatus('Linked! Redirecting...')
-        setTimeout(() => navigate('/send'), 600)
+        setTimeout(() => navigate('/main'), 600)
       } else setStatus(data.error || 'Link failed')
     } catch (err) { setStatus(err.message) } finally { setLoading(false) }
   }
